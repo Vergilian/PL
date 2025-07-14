@@ -1,10 +1,6 @@
 import json
 from pathlib import Path
-
-BASE_DIR = Path(__file__).parent
-TESTS_PATH = BASE_DIR / "tests.json"
-VALUES_PATH = BASE_DIR / "values.json"
-REPORT_PATH = BASE_DIR / "report.json"
+import sys
 
 
 def load_json(path):
@@ -31,11 +27,19 @@ def fill_values(node, values_map):
             fill_values(item, values_map)
 
 
-values = load_json(VALUES_PATH)
-tests = load_json(TESTS_PATH)
+if len(sys.argv) < 4:
+    print('Для использования: python task3.py <tests_path> <values_path> <report_path>')
+    sys.exit(1)
+
+tests_path = Path(sys.argv[1])
+values_path = Path(sys.argv[2])
+report_path = Path(sys.argv[3])
+
+values = load_json(values_path)
+tests = load_json(tests_path)
 
 values_map = {entry["id"]: entry["value"] for entry in values["values"]}
 
 fill_values(tests["tests"], values_map)
 
-save_json(REPORT_PATH, tests)
+save_json(report_path, tests)
